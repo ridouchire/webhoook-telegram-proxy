@@ -12,7 +12,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 $app = AppFactory::create();
 
 $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
-    'users' => [
+    'secure' => false,
+    'users'  => [
         getenv('BASIC_AUTH_USERNAME') => getenv('BASIC_AUTH_PASSWORD')
     ]
 ]));
