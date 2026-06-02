@@ -3,6 +3,7 @@
 use Slim\Factory\AppFactory;
 use Ridouchire\WebhookTelegramProxy\EventQueue\JsonFiledir;
 use Ridouchire\WebhookTelegramProxy\Controllers\AlertReceiver;
+use Ridouchire\WebhookTelegramProxy\Controllers\ErrorHandler;
 use Ridouchire\WebhookTelegramProxy\Controllers\TextMessageReceiver;
 use Ridouchire\WebhookTelegramProxy\GrafanaAlertService;
 use Ridouchire\WebhookTelegramProxy\TextMessageService;
@@ -21,6 +22,7 @@ $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
 $app->addRoutingMiddleware();
 
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+$errorMiddleware->setDefaultErrorHandler(new ErrorHandler($app));
 
 $queue = new JsonFiledir(__DIR__ . DIRECTORY_SEPARATOR . 'queue');
 
