@@ -28,6 +28,7 @@ class ErrorHandler
 
         $response  = $this->app->getResponseFactory()->createResponse();
 
+        $response->withHeader('Content-type', 'application/json');
         $response->getBody()->write(
             json_encode($payload, JSON_UNESCAPED_UNICODE)
         );
