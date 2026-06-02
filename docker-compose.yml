@@ -23,6 +23,7 @@ services:
     ports:
       - 80:80
   webhook-worker:
+    container_name: ridouchire-webhook-worker
     build:
       dockerfile: Dockerfile.worker
       context: .
