@@ -1,0 +1,24 @@
+FROM library/php:8.4.12-alpine AS base
+RUN apk add \
+  zip \
+  libzip-dev && \
+  docker-php-ext-install -j$(nproc) zip && \
+  docker-php-source delete
+
+FROM composer:latest AS deps
+COPY composer.json .
+COPY composer.lock .
+RUN composer install \
+  --ignore-platform-reqs \
+  --no-interaction \
+  --no-plugins \
+  --no-scripts \
+  --prefer-dist \
+  --no-dev
+
+FROM base AS production
+WORKDIR /app
+COPY --from=deps /app/vendor ./vendor
+COPY worker.php .
+COPY src ./src
+CMD php ./worker.php

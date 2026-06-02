@@ -1,0 +1,37 @@
+services:
+  webhook-app:
+    build:
+      dockerfile: Dockerfile.webapp
+      context: .
+      target: production
+    restart: always
+    environment:
+      BASIC_AUTH_USERNAME: ${BASIC_AUTH_USERNAME:-}
+      BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:-}
+    env_file:
+      - '.env'
+    volumes:
+      - './data:/var/www/html/queue:rw'
+    container_name: ridouchire-webhook-app
+  nginx:
+    build:
+      dockerfile: Dockerfile.nginx
+      context: .
+      target: production
+    container_name: ridouchire-webhook-webserver
+    restart: always
+    ports:
+      - 80:80
+  webhook-worker:
+    build:
+      dockerfile: Dockerfile.worker
+      context: .
+      target: production
+    environment:
+      TELEGRAM_API_TOKEN: ${TELEGRAM_API_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+    env_file:
+      - '.env'
+    restart: always
+    volumes:
+      - './data:/app/queue'

@@ -1,0 +1,23 @@
+FROM library/php:8.4.12-fpm-alpine AS base
+RUN apk add --no-cache --virtual \
+  zip \
+  libzip-dev && \
+  docker-php-ext-install -j$(nproc) zip
+
+FROM composer:latest AS deps
+COPY composer.json .
+COPY composer.lock .
+RUN composer install \
+  --no-interaction \
+  --no-plugins \
+  --no-scripts \
+  --prefer-dist \
+  --no-dev
+
+FROM base AS production
+WORKDIR /var/www/html
+COPY webapp-php.ini /usr/local/etc/php/conf.d
+COPY webapp-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+COPY --from=deps /app/vendor ./vendor
+COPY index.php .
+COPY src ./src

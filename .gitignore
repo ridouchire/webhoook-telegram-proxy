@@ -1,0 +1,4 @@
+vendor/*
+.projectile
+data/*
+.env
