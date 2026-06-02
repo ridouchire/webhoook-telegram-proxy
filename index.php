@@ -19,7 +19,7 @@ $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
 
 $app->addRoutingMiddleware();
 
-$errorMiddleware = $app->addErrorMiddleware(false, false, false);
+$errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
 $queue = new JsonFiledir(__DIR__ . DIRECTORY_SEPARATOR . 'queue');
 
