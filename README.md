@@ -1,3 +1,5 @@
+[![PHP CI](https://github.com/ridouchire/webhoook-telegram-proxy/actions/workflows/php.yml/badge.svg)](https://github.com/ridouchire/webhoook-telegram-proxy/actions/workflows/php.yml)
+
 # webhoook-telegram-proxy
 
 Суть проекта - принять сообщение или алерт от Grafana из сетевого контура, где недоступен TelegramAPI, и отправить его боту.
