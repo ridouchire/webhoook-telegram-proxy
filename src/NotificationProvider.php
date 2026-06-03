@@ -2,8 +2,12 @@
 
 namespace Ridouchire\WebhookTelegramProxy;
 
+use Ridouchire\WebhookTelegramProxy\Exceptions\FailedSendMessage;
+
 interface NotificationProvider
 {
-    /** @phpstan-ignore missingType.return */
-    public function send(string $message);
+    /**
+     * @throws FailedSendMessage
+     */
+    public function send(string $message): void;
 }

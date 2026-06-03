@@ -2,21 +2,17 @@
 
 namespace Ridouchire\WebhookTelegramProxy;
 
-use SplObjectStorage;
-
 class NotificationMaster
 {
-    /** @phpstan-ignore missingType.generics */
-    private SplObjectStorage $providers;
-
-    public function __construct()
-    {
-        $this->providers = new SplObjectStorage();
+    public function __construct(
+        /** @var NotificationProvider[] */
+        private array $providers = []
+    ) {
     }
 
-    public function attach(NotificationProvider $notification_provider): void
+    public function register(NotificationProvider $notification_provider): void
     {
-        $this->providers->attach($notification_provider);
+        $this->providers[] = $notification_provider;
     }
 
     public function send(string $message): void

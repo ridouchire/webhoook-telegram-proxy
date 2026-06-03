@@ -9,15 +9,16 @@ use Throwable;
 
 class ErrorHandler
 {
+    /** @phpstan-ignore missingType.generics */
     public function __construct(
         private App $app
-    )
-    {
-
-            }
+    ) {
+    }
 
     public function __invoke(Request $request, Throwable $exception): Response
     {
+        $response  = $this->app->getResponseFactory()->createResponse();
+
         $payload = [
             'type'  => get_class($exception),
             'error' => $exception->getMessage(),
@@ -26,12 +27,16 @@ class ErrorHandler
             'trace' => explode(PHP_EOL, $exception->getTraceAsString())
         ];
 
-        $response  = $this->app->getResponseFactory()->createResponse();
+        $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
+        if (json_last_error() !== JSON_ERROR_NONE || $json === false) {
+            $response = $response->withStatus(500);
+
+            return $response;
+        }
 
         $response->withHeader('Content-type', 'application/json');
-        $response->getBody()->write(
-            json_encode($payload, JSON_UNESCAPED_UNICODE)
-        );
+        $response->getBody()->write($json);
 
         return $response;
     }

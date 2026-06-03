@@ -5,6 +5,9 @@ namespace Ridouchire\WebhookTelegramProxy\EventQueue;
 use RuntimeException;
 use Ridouchire\WebhookTelegramProxy\Event;
 use Ridouchire\WebhookTelegramProxy\EventQueue;
+use Ridouchire\WebhookTelegramProxy\Exceptions\EventQueueCommitFailed;
+use Ridouchire\WebhookTelegramProxy\Exceptions\EventQueuePublushFailed;
+use Ridouchire\WebhookTelegramProxy\Exceptions\EventQueueReceiveFailed;
 
 class JsonFiledir implements EventQueue
 {
@@ -21,7 +24,7 @@ class JsonFiledir implements EventQueue
         );
 
         if ($res === false) {
-            throw new RuntimeException();
+            throw new EventQueuePublushFailed();
         }
     }
 
@@ -61,7 +64,7 @@ class JsonFiledir implements EventQueue
         $files = glob($this->data_dir . DIRECTORY_SEPARATOR . '*.json');
 
         if ($files === false) {
-            throw new RuntimeException();
+            throw new EventQueueReceiveFailed();
         }
 
         if (sizeof($files) == 0) {
@@ -72,7 +75,7 @@ class JsonFiledir implements EventQueue
         $data     = file_get_contents($filename);
 
         if ($data === false) {
-            throw new RuntimeException();
+            throw new EventQueueReceiveFailed();
         }
 
         /**
@@ -82,7 +85,7 @@ class JsonFiledir implements EventQueue
         $event_data = json_decode($data, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new RuntimeException(json_last_error_msg());
+            throw new EventQueueReceiveFailed(json_last_error_msg());
         }
 
         return Event::fromArray($event_data);
@@ -93,7 +96,7 @@ class JsonFiledir implements EventQueue
         $res = unlink($this->data_dir . DIRECTORY_SEPARATOR . $event->id . '.json');
 
         if ($res === false) {
-            throw new RuntimeException();
+            throw new EventQueueCommitFailed();
         }
     }
 }

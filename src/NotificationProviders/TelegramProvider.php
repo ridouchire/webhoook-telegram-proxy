@@ -2,8 +2,10 @@
 
 namespace Ridouchire\WebhookTelegramProxy\NotificationProviders;
 
+use Ridouchire\WebhookTelegramProxy\Exceptions\FailedSendMessage;
 use Ridouchire\WebhookTelegramProxy\NotificationProvider;
 use TelegramBot\Api\BotApi as TelegramBotApi;
+use TelegramBot\Api\HttpException;
 
 class TelegramProvider implements NotificationProvider
 {
@@ -19,6 +21,10 @@ class TelegramProvider implements NotificationProvider
 
     public function send(string $message): void
     {
-        $this->bot_api->sendMessage($this->chat_id, $message);
+        try {
+            $this->bot_api->sendMessage($this->chat_id, $message);
+        } catch (HttpException $e) {
+            throw new FailedSendMessage(self::class . ':' . $e->getMessage());
+        }
     }
 }

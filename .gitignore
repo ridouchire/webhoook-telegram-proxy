@@ -2,3 +2,5 @@ vendor/*
 .projectile
 data/*
 .env
+queue/*
+.phpunit.result.cache

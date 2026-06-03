@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Grafana Alert Webhook Payload",
+  "description": "Schema for Grafana Alerting webhook payload, supporting multiple alerts.",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Версия формата уведомления (обычно '0.4' или '1.0')"
+    },
+    "status": {
+      "type": "string",
+      "description": "Статус группы алертов: 'firing', 'resolved', или 'pending'",
+      "enum": ["firing", "resolved", "pending"]
+    },
+    "receiver": {
+      "type": "string",
+      "description": "Имя получателя (webhook receiver name)"
+    },
+    "groupKey": {
+      "type": "string",
+      "description": "Ключ группы алертов (используется для дедупликации)"
+    },
+    "groupLabels": {
+      "type": "object",
+      "description": "Групповые метки",
+      "properties": {
+        "alertname": { "type": "string" }
+      },
+      "additionalProperties": { "type": "string" }
+    },
+    "commonLabels": {
+      "type": "object",
+      "description": "Общие метки для всех алертов в группе",
+      "additionalProperties": { "type": "string" }
+    },
+    "commonAnnotations": {
+      "type": "object",
+      "description": "Общие аннотации для всех алертов в группе",
+      "additionalProperties": { "type": "string" }
+    },
+    "alertName": {
+      "type": "string",
+      "description": "Название алерта (если все алерты в группе имеют одинаковое имя)"
+    },
+    "alerts": {
+      "type": "array",
+      "description": "Массив объектов алертов",
+      "items": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Статус отдельного алерта: 'firing', 'resolved', 'pending'",
+            "enum": ["firing", "resolved", "pending"]
+          },
+          "labels": {
+            "type": "object",
+            "description": "Метки конкретного алерта",
+            "additionalProperties": { "type": "string" }
+          },
+          "annotations": {
+            "type": "object",
+            "description": "Аннотации конкретного алерта",
+            "additionalProperties": { "type": "string" }
+          },
+          "fingerprint": {
+            "type": "string",
+            "description": "Уникальный идентификатор алерта"
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Время начала алерта (ISO 8601)"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Время окончания алерта (ISO 8601, null если еще не завершился)"
+          },
+          "generatorURL": {
+            "type": "string",
+            "description": "URL на график в Grafana для этого алерта"
+          },
+          "dashboardUID": {
+            "type": "string",
+            "description": "UID дашборда, если алерт связан с ним"
+          },
+          "panelID": {
+            "type": "string",
+            "description": "ID панели, если алерт связан с ней"
+          },
+          "value": {
+            "type": "string",
+            "description": "Значение, вызвавшее алерт (например, '84.15')",
+            "nullable": true
+          }
+        },
+        "required": ["status", "labels", "annotations", "fingerprint", "startsAt"]
+      }
+    }
+  },
+  "required": ["version", "status", "receiver", "alerts"]
+}
